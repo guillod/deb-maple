@@ -1,0 +1,67 @@
+#!/usr/bin/make -f
+export DESTDIR=$(CURDIR)/debian/maple
+# Upstream version without revision
+export VERSION=$(shell dpkg-parsechangelog --show-field Version | cut -d'-' -f1)
+# This variable is used by xdg scripts run by the Maple installer
+export XDG_DATA_DIRS=$(DESTDIR)/usr/share/
+
+%:
+	dh $@
+
+override_dh_install:
+
+	# Creating empty directory used by installer
+	@mkdir -p $(DESTDIR)/usr/share/mime/packages
+
+	# Installing maple
+# Installer reports error since with --defaultapp 1 it tries to write to real /usr/share
+# but with --defaultapp 0 the mime type are to generated
+	@if [ -f Maple$(VERSION)LinuxX64Installer.run ]; then \
+		chmod +x Maple$(VERSION)LinuxX64Installer.run; \
+		./Maple$(VERSION)LinuxX64Installer.run --mode unattended --installdir $(DESTDIR)/opt/maple \
+		--desktopshortcut 0 --defaultapp 1 --enableUpdates 0 --checkForUpdatesNow 0 --licenseType network; \
+	else \
+		echo "Maple installer not provided at $(CURDIR)/Maple$(VERSION)LinuxX64Installer.run"; \
+		exit 1; \
+	fi
+
+	# Correcting generated scripts and desktop files
+	@for f in `grep -rl $(DESTDIR) debian/maple/opt/maple/bin`; do \
+		#sed -ri "s|\"?$(DESTDIR)([^\"]*)\"?|\1|g" $${f} \
+		sed -i "s|$(DESTDIR)||g" $${f}; \
+	done
+
+	# Adding links, icon and desktop
+	@dh_link /opt/maple/bin/maple /usr/bin/maple
+	@dh_link /opt/maple/bin/xmaple /usr/bin/xmaple
+	@dh_link /opt/maple/bin/maple.system.type /usr/bin/maple.system.type
+	@dh_link /opt/maple/bin/mint /usr/bin/mint
+	@dh_install debian/maple/opt/maple/bin/Maple2022.png /usr/share/icons/hicolor/48x48/apps/maple.png
+	@dh_install debian/maple/opt/maple/bin/*.desktop /usr/share/applications/
+
+	# Copying man pages
+	@dh_install debian/maple/opt/maple/man/man1/*.1 /usr/share/man/man1/
+
+	# Copying license.dat if provided
+	@if [ -f license.dat ]; then \
+		dh_install license.dat /opt/maple/license/; \
+	fi
+
+	# Deleting mime caches
+	@find $(DESTDIR)/usr/share/mime/ -type f -not -path */packages/* -delete
+	@find $(DESTDIR)/usr/share/mime/ -type f -not -path */packages/* -delete
+	@find $(DESTDIR)/usr/share/mime/ -type d -empty -delete
+
+	# Deleting installer log and uninstall directory
+	@rm $(DESTDIR)/opt/maple/*.log
+	@rm -Rf $(DESTDIR)/opt/maple/uninstall
+
+# Do no strip and use shlibs
+override_dh_strip_nondeterminism:
+	
+override_dh_strip:
+	
+override_dh_makeshlibs:
+	
+override_dh_shlibdeps:
+	

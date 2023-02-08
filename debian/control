@@ -1,0 +1,15 @@
+Source: maple
+Section: math
+Priority: optional
+Maintainer: Julien Guillod <julien.guillod@sorbonne-universite.fr>
+Build-Depends: debhelper (>=11~)
+Standards-Version: 4.1.4
+Homepage: https://www.maplesoft.com/products/Maple/
+
+Package: maple
+Architecture: amd64
+Multi-Arch: foreign
+Depends: ${misc:Depends}
+Description: Commercial symbolic and numeric computing program.
+ Commercial symbolic and numeric computing environment
+ as well as a multi-paradigm programming language.

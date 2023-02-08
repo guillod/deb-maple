@@ -1,0 +1,8 @@
+Maple*.run
+license.dat
+debhelper-build-stamp
+*.substvars
+build/
+debian/files
+debian/maple
+debian/.debhelper
