@@ -1,3 +1,9 @@
+maple (2022.2) unstable; urgency=medium
+
+  * Upstream version 2022.2
+
+ -- Julien Guillod <julien.guillod@sorbonne-universite.fr>  Wed, 08 Feb 2023 09:17:04 +0100
+
 maple (2022.1) unstable; urgency=medium
 
   * Upstream version 2022.1
