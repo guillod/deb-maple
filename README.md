@@ -22,7 +22,7 @@ Inspired by [Maple Arch Linux PKGBUILD](https://aur.archlinux.org/packages/maple
 
 1. Define the desired version:
 
-        export VERSION=2022.0
+        export VERSION=2022.1
 
 2. Clone the git repository containing the packages rules in an empty directory:
 
